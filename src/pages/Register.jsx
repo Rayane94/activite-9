@@ -1,62 +1,41 @@
 import { useState } from "react";
 
 function Register() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [message, setMessage] = useState("");
+  const [mail, setMail] = useState("");
+  const [pass, setPass] = useState("");
+  const [info, setInfo] = useState("");
 
-  const handleSubmit = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
 
-    try {
-      const response = await fetch("https://offers-api.digistos.com/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+    const res = await fetch("https://offers-api.digistos.com/api/auth/register", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify({ email: mail, password: pass }),
+    });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage("Inscription réussie !");
-        setEmail("");
-        setPassword("");
-      } else {
-        setMessage(data.message || "Erreur lors de l’inscription.");
-      }
-    } catch (error) {
-      setMessage("Erreur de réseau ou du serveur.");
+    const data = await res.json();
+    if (res.ok) {
+      setInfo("Inscription réussie");
+      setMail("");
+      setPass("");
+    } else {
+      setInfo(data.message || "Une erreur s’est produite");
     }
   };
 
   return (
-    <div style={{ maxWidth: "400px", margin: "auto", paddingTop: "80px" }}>
-      <h2>Créer un compte</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          required
-          onChange={(e) => setEmail(e.target.value)}
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-        <input
-          type="password"
-          placeholder="Mot de passe"
-          value={password}
-          required
-          onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", marginBottom: "10px", padding: "8px" }}
-        />
-        <button type="submit" style={{ width: "100%", padding: "10px" }}>
-          S'inscrire
-        </button>
+    <div>
+      <h2>S’inscrire</h2>
+      <form onSubmit={submit}>
+        <input placeholder="Email" value={mail} onChange={(e) => setMail(e.target.value)} />
+        <input placeholder="Mot de passe" type="password" value={pass} onChange={(e) => setPass(e.target.value)} />
+        <button>Valider</button>
       </form>
-      {message && <p style={{ marginTop: "20px", color: "red" }}>{message}</p>}
+      {info && <p>{info}</p>}
     </div>
   );
 }
